@@ -118,7 +118,7 @@ A MetricFamily MAY have zero or more Metrics. A MetricFamily MUST have a name, H
 
 MetricFamily names are a string and MUST be unique within a MetricSet. Names SHOULD be in snake_case. Metric names MUST follow the restrictions in the ABNF section.
 
-Ingestors MAY accept duplicate MetricFamily names, provided that there is a mechanism to distinguish the resulting MetricPoints.
+Ingestors MAY accept duplicate MetricFamily names, provided that either of HELP, TYPE, or UNIT is unique within the duplicated MetricFamily names. Notably Exposers MAY duplicate MetricFamilies when aggregating external metrics that have the same MetricFamily name, but come from different sources and have either different HELP, or TYPE, or UNIT. Be aware that exposing such metrics directly to end-users reduces usability due to confusion about which Metric belongs to which MetricFamily.
 
 Colons in MetricFamily names are RESERVED to signal that the MetricFamily is the result of a calculation or aggregation of a general purpose monitoring system.
 
@@ -128,7 +128,7 @@ MetricFamily names beginning with underscores are RESERVED and MUST NOT be used 
 
 The name of a MetricFamily MUST NOT result in a potential clash for sample metric names as per the ABNF with another MetricFamily in the Text Format within a MetricSet. An example would be a gauge called "foo_created" as a counter called "foo" could create a "foo_created" in the text format.
 
-Ingestors MAY accept conflicting MetricFamily names, provided that there is a mechanism to distinguish the resulting MetricPoints. It follows that ingestors MAY accept MetricFamily name without the type specific suffix.
+Ingestors MAY accept duplicate MetricFamily names, provided that either of HELP, TYPE, or UNIT is unique within the duplicated MetricFamily names. Notably Exposers MAY duplicate MetricFamilies when aggregating external metrics that have the same MetricFamily name, but come from different sources and have either different HELP, or TYPE, or UNIT. Be aware that exposing such metrics directly to end-users reduces usability due to confusion about which Metric belongs to which MetricFamily.
 
 Exposers SHOULD avoid names that could be confused with the suffixes that text format sample metric names use.
 
@@ -150,7 +150,7 @@ Type specifies the MetricFamily type. Valid values are "unknown", "gauge", "coun
 
 Unit specifies MetricFamily units. If non-empty, it MUST be a suffix of the MetricFamily name separated by an underscore. Be aware that further generation rules might make it an infix in the text format.
 
-Ingestors MAY accept MetricFamily name without unit suffix.
+Ingestors MAY accept MetricFamily name without unit suffix. Be aware that exposing such metrics directly to end-users reduces usability due to confusion about what the metric's unit is.
 
 ##### Help
 
@@ -641,7 +641,7 @@ foo 18.0 456
 
 The MetricPoint's Total Value Sample MetricName MUST have the suffix `_total`. If present the MetricPoint's Created Value Sample MetricName MUST have the suffix `_created`.
 
-Ingestors MAY accept MetricPoint Total Value name without the `_total` suffix.
+Ingestors MAY accept MetricPoint Total Value name without the `_total` suffix. Be aware that exposing such metrics directly to end-users reduces usability due to confusion about what the metric's type is.
 
 An example with a Metric with no labels, and a MetricPoint with no timestamp and no created:
 
